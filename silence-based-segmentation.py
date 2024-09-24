@@ -8,7 +8,7 @@ from huggingface_hub import login  # To authenticate with Hugging Face Hub
 
 nltk.download('punkt')  # Download the tokenizer for sentence splitting
 
-def split_audio_on_silence(audio_path, silence_thresh=-50, min_silence_len=500, output_folder="segments"):
+def split_audio_on_silence(audio, silence_thresh=-50, min_silence_len=500, output_folder="segments"):
     """
     Splits a given audio file into segments based on periods of silence.
     
@@ -22,7 +22,7 @@ def split_audio_on_silence(audio_path, silence_thresh=-50, min_silence_len=500, 
         list: A list of file paths to the segmented audio chunks.
     """
     # Load the audio file
-    audio = AudioSegment.from_file(audio_path)
+    #audio = AudioSegment.from_file(audio_path)
     
     # Split the audio based on silence
     audio_chunks = split_on_silence(
@@ -60,10 +60,11 @@ def process_row(row, silence_thresh, min_silence_len, output_folder):
         dict: A dictionary with segmented audio paths and corresponding transcription parts.
     """
     # Split the audio into segments based on silence
-    audio_segments = split_audio_on_silence(row["audio"]["path"], silence_thresh, min_silence_len, output_folder)
+    print(f"==================DEBUGGING===================> Splitting the audio into segments")
+    audio_segments = split_audio_on_silence(row["audio"], silence_thresh, min_silence_len, output_folder)
     
     # Split the transcription into sentences
-    transcription_segments = nltk.tokenize.sent_tokenize(row["transcription"])  # Split transcription into sentences
+    transcription_segments = nltk.tokenize.sent_tokenize(row["transcript"])  # Split transcription into sentences
     
     # If the number of audio segments and transcription segments don't match, we can flag it for manual review
     if len(audio_segments) != len(transcription_segments):
